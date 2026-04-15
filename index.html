@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Multident International · Lista de Precios</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      color: #1a2c3e;
+      scroll-behavior: smooth;
+    }
+    /* SPLASH */
+    #splash {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #1e6fdf, #00b4ff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 9999;
+      animation: fadeOutSplash 1s ease forwards;
+      animation-delay: 2.2s;
+      text-align: center;
+    }
+    #splash h1 { font-size: 2rem; color: white; text-shadow: 0 4px 12px rgba(0,0,0,0.2); animation: zoomGlow 0.8s ease; }
+    #splash p { color: rgba(255,255,255,0.9); margin-top: 8px; animation: fadeSlide 1.2s ease; }
+    #splash img { max-width: 280px; width: 80%; margin-top: 25px; border-radius: 28px; box-shadow: 0 20px 30px rgba(0,0,0,0.25); animation: zoomGlow 0.9s ease; }
+    @keyframes zoomGlow { 0% { transform: scale(0.7); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    @keyframes fadeSlide { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeOutSplash { 0% { opacity: 1; visibility: visible; } 100% { opacity: 0; visibility: hidden; } }
+    /* header */
+    .logo-header { background: white; text-align: center; padding: 20px 15px 10px 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); position: relative; }
+    .logo-header img { max-width: 450px; width: 95%; border-radius: 20px; }
+    .title-bar { background: white; padding: 12px 20px; text-align: center; border-bottom: 2px solid #eef2ff; position: relative; }
+    .title-bar h1 { font-size: 1.7rem; color: #0a4b8a; }
+    .title-bar p { color: #4a627a; font-size: 0.85rem; margin-top: 6px; }
+    .print-icon { position: absolute; top: 15px; right: 20px; background: #2c3e66; color: white; padding: 8px 12px; border-radius: 40px; font-size: 0.8rem; cursor: pointer; border: none; z-index: 10; }
+    /* contenedor */
+    .container { max-width: 1000px; margin: 0 auto; padding: 20px 18px 40px; }
+    .search-box { width: 100%; padding: 14px 20px; font-size: 1rem; border: none; border-radius: 60px; background: white; box-shadow: 0 6px 14px rgba(0,0,0,0.08); margin-bottom: 20px; border: 1px solid #cbdff2; }
+    .search-box:focus { box-shadow: 0 8px 20px rgba(0,119,255,0.2); border-color: #0077ff; outline: none; }
+    /* filtros */
+    .filter-buttons { display: flex; flex-wrap: nowrap; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 8px; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+    .filter-btn { background: white; border: none; padding: 8px 16px; border-radius: 40px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.1); transition: 0.2s; white-space: nowrap; flex-shrink: 0; }
+    .filter-btn.active { background: #0f3b6f; color: white; }
+    .filter-btn:hover { transform: scale(1.02); background: #e0f0ff; }
+    /* cards */
+    .card { background: white; border-radius: 20px; padding: 14px 18px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 12px rgba(0,0,0,0.07); gap: 12px; flex-wrap: wrap; }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 16px 28px rgba(0,0,0,0.12); }
+    .item-info { flex: 2; min-width: 150px; }
+    .item-name { font-weight: 700; font-size: 1rem; color: #1f2f3e; }
+    .item-category { font-size: 0.7rem; color: #5f7f9e; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
+    .highlight { background-color: #ffeb3b; font-weight: bold; border-radius: 4px; padding: 0 2px; }
+    .price-box { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .price { font-weight: 800; font-size: 1.2rem; color: #0077ff; background: #eef5ff; padding: 4px 12px; border-radius: 40px; white-space: nowrap; }
+    .price-consult { font-weight: 800; font-size: 1rem; color: #e67e22; background: #fef5e8; padding: 4px 12px; border-radius: 40px; white-space: nowrap; }
+    .btn-img { background: #2c3e66; border: none; color: white; font-size: 0.7rem; padding: 6px 12px; border-radius: 40px; cursor: pointer; }
+    .btn-add { background: #0077ff; border: none; color: white; font-size: 0.7rem; padding: 6px 12px; border-radius: 40px; cursor: pointer; transition: 0.2s; }
+    .btn-add:hover { opacity: 0.85; transform: scale(0.96); }
+    .section-title { background: #0f3b6f; color: white; font-weight: bold; font-size: 1.2rem; padding: 12px 18px; border-radius: 40px; margin: 25px 0 12px 0; }
+    .subcat-title { background: #1e4a76; color: white; font-weight: 800; font-size: 0.95rem; padding: 8px 18px; border-radius: 30px; margin: 12px 0 8px 0; display: inline-block; border-left: 5px solid #ffb347; }
+    /* botones flotantes */
+    .float-btn { position: fixed; right: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; background: white; border-radius: 50px; padding: 10px 18px; text-decoration: none; font-weight: bold; box-shadow: 0 6px 16px rgba(0,0,0,0.25); z-index: 1000; transition: 0.2s; cursor: pointer; border: none; font-size: 0.85rem; }
+    .float-btn:hover { transform: scale(1.03); }
+    .whatsapp { background: #25D366; color: white; bottom: 20px; padding: 14px 22px; font-size: 1rem; gap: 12px; }
+    .ia { background: #111; color: white; bottom: 95px; }
+    .quote-btn { background: #f39c12; color: white; bottom: 165px; }
+    .go-top { background: #0f3b6f; color: white; bottom: 235px; justify-content: center; padding: 10px; width: auto; }
+    /* modal */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center; }
+    .modal-content { background: white; width: 90%; max-width: 450px; border-radius: 28px; padding: 20px; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 30px rgba(0,0,0,0.3); animation: fadeInUp 0.3s; }
+    .modal-content h3 { margin-bottom: 12px; color: #0a4b8a; }
+    .modal-close { float: right; font-size: 24px; cursor: pointer; background: none; border: none; }
+    .quote-items { margin: 15px 0; max-height: 300px; overflow-y: auto; }
+    .quote-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee; }
+    .quote-item button { background: #e74c3c; color: white; border: none; border-radius: 20px; padding: 2px 10px; cursor: pointer; }
+    .quote-total { font-weight: bold; text-align: right; margin: 10px 0; font-size: 1.2rem; }
+    .btn-whatsapp-quote { background: #25D366; color: white; border: none; padding: 10px; border-radius: 40px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-clear { background: #95a5a6; color: white; border: none; padding: 8px; border-radius: 40px; width: 100%; cursor: pointer; margin-top: 8px; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    footer { text-align: center; font-size: 0.7rem; color: #3b5c7a; margin: 30px 0 20px; }
+    @media (min-width: 601px) {
+      .item-name { font-size: 1.1rem; }
+      .price { font-size: 1.3rem; padding: 6px 14px; }
+      .price-consult { font-size: 1rem; padding: 6px 14px; }
+      .btn-img, .btn-add { font-size: 0.75rem; padding: 6px 14px; }
+    }
+    @media (max-width: 600px) {
+      .filter-buttons { padding-bottom: 8px; margin-bottom: 16px; gap: 8px; }
+      .filter-btn { padding: 6px 14px; font-size: 0.75rem; }
+      .card { padding: 16px; flex-direction: column; align-items: stretch; gap: 12px; }
+      .item-info { min-width: auto; }
+      .item-name { font-size: 1.2rem; line-height: 1.3; }
+      .item-category { font-size: 0.75rem; margin-top: 6px; }
+      .price { font-size: 1.4rem; padding: 6px 14px; }
+      .price-consult { font-size: 1rem; padding: 6px 14px; }
+      .price-box { justify-content: space-between; width: 100%; gap: 12px; }
+      .btn-img, .btn-add { padding: 8px 16px; font-size: 0.85rem; flex: 1; text-align: center; }
+      .section-title { font-size: 1.1rem; padding: 10px 16px; margin: 20px 0 10px; }
+      .subcat-title { font-size: 0.85rem; padding: 6px 14px; }
+      .float-btn { right: 12px; }
+      .whatsapp { bottom: 12px; padding: 12px 18px; font-size: 0.9rem; }
+      .ia { bottom: 80px; padding: 8px 14px; font-size: 0.75rem; }
+      .quote-btn { bottom: 140px; padding: 8px 14px; font-size: 0.75rem; }
+      .go-top { bottom: 200px; padding: 8px 12px; }
+      .modal-content { width: 95%; padding: 16px; }
+      .quote-item { font-size: 0.85rem; }
+    }
+    @media print {
+      body { background: white; }
+      .float-btn, .filter-buttons, .search-box, .modal, .print-icon, .btn-img, .btn-add { display: none; }
+      .card { break-inside: avoid; border: 1px solid #ccc; }
+    }
+  </style>
+</head>
+<body>
+<div class="logo-header">
+  <img src="https://i.postimg.cc/F72kdZJQ/Multident-Logo.png" alt="Multident International">
+  <button class="print-icon" id="printBtn">🖨️ Imprimir</button>
+</div>
+<div id="splash">
+  <h1>🦷 Multident International</h1>
+  <p>Alta tecnología · Prótesis de excelencia</p>
+  <img src="https://i.postimg.cc/F72kdZJQ/Multident-Logo.png" alt="Logo">
+  <audio autoplay><source src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" type="audio/mpeg"></audio>
+</div>
+<header class="title-bar">
+  <h1>📋 Lista de Precios</h1>
+  <p>Especialistas en prótesis fija, removible y ortodoncia</p>
+</header>
+<div class="container">
+  <input type="text" id="searchInput" class="search-box" placeholder="🔍 Buscar por nombre, categoría..." onkeyup="filterAndHighlight()">
+  <div class="filter-buttons" id="filterButtons">
+    <button class="filter-btn active" data-filter="all">Todos</button>
+    <button class="filter-btn" data-filter="Prótesis fijas">Fijas</button>
+    <button class="filter-btn" data-filter="Prótesis parcial removible">Parcial removible</button>
+    <button class="filter-btn" data-filter="Prótesis flexibles">Flexibles</button>
+    <button class="filter-btn" data-filter="Ortodoncia">Ortodoncia</button>
+    <button class="filter-btn" data-filter="Prótesis totales">Totales</button>
+    <button class="filter-btn" data-filter="Adicionales">Adicionales</button>
+    <button class="filter-btn" data-filter="Otros">Otros</button>
+  </div>
+  <div id="dynamicList"></div>
+</div>
+<!-- Botones flotantes -->
+<a href="https://wa.me/51991148547" target="_blank" class="float-btn whatsapp">📲 Contactar por WhatsApp</a>
+<a href="https://chat.openai.com/?q=Quiero%20consultar%20sobre%20un%20tratamiento%20dental" target="_blank" class="float-btn ia">🤖 Consultar IA</a>
+<button id="openQuoteBtn" class="float-btn quote-btn">🛒 Cotizar (<span id="quoteCount">0</span>) S/<span id="quoteTotalFloat">0</span></button>
+<button id="goTopBtn" class="float-btn go-top">↑ Arriba</button>
+<!-- Modal Cotización -->
+<div id="quoteModal" class="modal">
+  <div class="modal-content">
+    <button class="modal-close" id="closeModalBtn">&times;</button>
+    <h3>📋 Cotización rápida</h3>
+    <div id="quoteItemsList" class="quote-items">(Agrega productos)</div>
+    <div class="quote-total">Total: S/ <span id="quoteTotalModal">0</span></div>
+    <button id="sendQuoteBtn" class="btn-whatsapp-quote">📲 Enviar cotización por WhatsApp</button>
+    <button id="clearQuoteBtn" class="btn-clear">🗑 Vaciar cotización</button>
+  </div>
+</div>
+<script>
+  // ======================== LISTA DE PRODUCTOS CON NUEVO ÍTEM "Base metálica híbrida" (Consultar) ========================
+  const productos = [
+    // ***** PRÓTESIS FIJAS - METAL *****
+    { name: "Corona metal porcelana", price: 80, category: "Metal", group: "Prótesis fijas", sub: "Metal" },
+    { name: "Corona veneer porcelana", price: 80, category: "Metal", group: "Prótesis fijas", sub: "Metal" },
+    { name: "Corona metal porcelana con hombro cerámico", price: 90, category: "Metal", group: "Prótesis fijas", sub: "Metal" },
+    { name: "Corona metal porcelana sobre implante", price: 160, category: "Metal", group: "Prótesis fijas", sub: "Metal" },
+    { name: "Incrustación de metal con porcelana", price: 80, category: "Metal", group: "Prótesis fijas", sub: "Metal" },
+    { name: "Incrustación de metal", price: 50, category: "Metal", group: "Prótesis fijas", sub: "Metal" },
+    { name: "Perno directo", price: 25, category: "Metal", group: "Prótesis fijas", sub: "Metal" },
+    { name: "Perno indirecto", price: 30, category: "Metal", group: "Prótesis fijas", sub: "Metal" },
+    { name: "Perno tapa", price: 30, category: "Metal", group: "Prótesis fijas", sub: "Metal" },
+    
+    // ***** PRÓTESIS FIJAS - ZIRCONIO *****
+    { name: "Corona / carilla / incrustación ST zirconio", price: 170, category: "Zirconio", group: "Prótesis fijas", sub: "Zirconio" },
+    { name: "Corona / carilla / incrustación Multilayer Zirconio", price: 250, category: "Zirconio", group: "Prótesis fijas", sub: "Zirconio" },
+    { name: "Corona zirconio sobre implante", price: 250, category: "Zirconio", group: "Prótesis fijas", sub: "Zirconio" },
+    { name: "Corona zirconio monolitico", price: 250, category: "Zirconio", group: "Prótesis fijas", sub: "Zirconio" },
+    { name: "Corona zirconio monolitico multilayer", price: 250, category: "Zirconio", group: "Prótesis fijas", sub: "Zirconio" },
+    { name: "Corona zirconio monolitico ST", price: 170, category: "Zirconio", group: "Prótesis fijas", sub: "Zirconio" },
+    { name: "Perno zirconio", price: 100, category: "Zirconio", group: "Prótesis fijas", sub: "Zirconio" },
+    
+    // ***** DISILICATO DE LITIO *****
+    { name: "Corona / carilla / incrustación en EMAX sistema CAD CAM", price: 250, category: "Disilicato de litio", group: "Prótesis fijas", sub: "Disilicato de litio" },
+    
+    // ***** CERÓMERO *****
+    { name: "Carillas / corona de cerómero", price: 150, category: "Cerómero", group: "Prótesis fijas", sub: "Cerómero" },
+    { name: "Incrustación de cerómero (depende tamaño) DESDE", price: 120, category: "Cerómero", group: "Prótesis fijas", sub: "Cerómero" },
+    
+    // ***** IVOCRON *****
+    { name: "Corona ivocron tipo ceramico", price: 50, category: "Ivocron", group: "Prótesis fijas", sub: "Ivocron" },
+    { name: "Corona jacket, ivocron", price: 50, category: "Ivocron", group: "Prótesis fijas", sub: "Ivocron" },
+    { name: "Corona veneer ivocron", price: 50, category: "Ivocron", group: "Prótesis fijas", sub: "Ivocron" },
+    
+    // ***** OTROS (dentro de PRÓTESIS FIJAS) *****
+    { name: "Corona acrilico rapido", price: 25, category: "Otros", group: "Prótesis fijas", sub: "Otros" },
+    { name: "Corona acrilico lento", price: 35, category: "Otros", group: "Prótesis fijas", sub: "Otros" },
+    
+    // ***** PRÓTESIS PARCIAL REMOVIBLE (se agrega Base metálica híbrida con precio "Consultar") *****
+    { name: "Base metálica", price: 200, category: "Removible", group: "Prótesis parcial removible", sub: null },
+    { name: "Base metálica mixta", price: 300, category: "Removible", group: "Prótesis parcial removible", sub: null },
+    { name: "Prótesis wipla", price: 120, category: "Removible", group: "Prótesis parcial removible", sub: null },
+    { name: "Base metálica híbrida", price: "Consultar", category: "Removible", group: "Prótesis parcial removible", sub: null },
+    
+    // ***** PRÓTESIS FLEXIBLES *****
+    { name: "Prótesis flexible", price: 220, category: "Flexible", group: "Prótesis flexibles", sub: null },
+    { name: "Estructura acetal", price: 250, category: "Flexible", group: "Prótesis flexibles", sub: null },
+    { name: "Inyectado y pulido", price: 180, category: "Flexible", group: "Prótesis flexibles", sub: null },
+    { name: "Solo inyectado desde modelo", price: 110, category: "Flexible", group: "Prótesis flexibles", sub: null },
+    { name: "Inyectado mufla mediana", price: 70, category: "Flexible", group: "Prótesis flexibles", sub: null },
+    { name: "Inyectado mufla grande", price: 75, category: "Flexible", group: "Prótesis flexibles", sub: null },
+    
+    // ***** ORTODONCIA *****
+    { name: "Hyrax", price: 170, category: "Ortodoncia", group: "Ortodoncia", sub: null },
+    { name: "Tornillo de expansión", price: 85, category: "Ortodoncia", group: "Ortodoncia", sub: null },
+    { name: "Placa tipo hawley", price: 65, category: "Ortodoncia", group: "Ortodoncia", sub: null },
+    { name: "Botón de nance", price: 65, category: "Ortodoncia", group: "Ortodoncia", sub: null },
+    { name: "ATP", price: 65, category: "Ortodoncia", group: "Ortodoncia", sub: null },
+    { name: "Mantenedor de espacio", price: 60, category: "Ortodoncia", group: "Ortodoncia", sub: null },
+    { name: "Botón de nance + ATP", price: 90, category: "Ortodoncia", group: "Ortodoncia", sub: null },
+    { name: "Arco lingual", price: 65, category: "Ortodoncia", group: "Ortodoncia", sub: null },
+    
+    // ***** PRÓTESIS TOTALES *****
+    { name: "Prótesis total superior", price: 120, category: "Total", group: "Prótesis totales", sub: null },
+    { name: "Prótesis total inferior", price: 120, category: "Total", group: "Prótesis totales", sub: null },
+    
+    // ***** ADICIONALES *****
+    { name: "Acrílico triplex", price: 35, category: "Acrílico", group: "Adicionales", sub: null },
+    { name: "Dientes ivostar (cada tableta)", price: 30, category: "Dientes", group: "Adicionales", sub: null },
+    { name: "Dientes ortolux (cada tableta)", price: 20, category: "Dientes", group: "Adicionales", sub: null },
+    { name: "Malla nacional", price: 20, category: "Malla", group: "Adicionales", sub: null },
+    { name: "Malla dentaurum", price: 25, category: "Malla", group: "Adicionales", sub: null },
+    { name: "1 diente ivostar", price: 5, category: "Dientes", group: "Adicionales", sub: null },
+    { name: "Placa base y rodete", price: 15, category: "Ortodoncia", group: "Adicionales", sub: null },
+    { name: "Fenestrada plateada/dorada", price: 15, category: "Adicional", group: "Adicionales", sub: null },
+    
+    // ***** OTROS (general) *****
+    { name: "Cubeta individual", price: 20, category: "Otros", group: "Otros", sub: null },
+    { name: "Encerado por pieza", price: 15, category: "Modelado", group: "Otros", sub: null },
+    { name: "Ataches C/U", price: 150, category: "Ataches", group: "Otros", sub: null },
+    { name: "Férula acetato", price: 40, category: "Férula", group: "Otros", sub: null },
+    { name: "Férula acrílico", price: 80, category: "Férula", group: "Otros", sub: null },
+    { name: "Reparación de prótesis", price: 50, category: "Reparación", group: "Otros", sub: null },
+    { name: "Rebasado de prótesis", price: 50, category: "Rebasado", group: "Otros", sub: null }
+  ];
+
+  const mainGroupOrder = ["Prótesis fijas","Prótesis parcial removible","Prótesis flexibles","Ortodoncia","Prótesis totales","Adicionales","Otros"];
+  const subOrderFijas = ["Metal","Zirconio","Disilicato de litio","Cerómero","Ivocron","Otros"];
+
+  // Cotización
+  let quote = [];
+
+  function updateAllQuantityButtons() {
+    document.querySelectorAll('.btn-add').forEach(btn => {
+      const productName = btn.getAttribute('data-name');
+      if (productName) {
+        const found = quote.find(item => item.name === productName);
+        const qty = found ? found.quantity : 0;
+        btn.innerHTML = qty > 0 ? `+ Cotizar (${qty})` : `+ Cotizar`;
+      }
+    });
+  }
+
+  function updateQuoteUI() {
+    const container = document.getElementById("quoteItemsList");
+    const totalModalSpan = document.getElementById("quoteTotalModal");
+    const countSpan = document.getElementById("quoteCount");
+    const totalFloatSpan = document.getElementById("quoteTotalFloat");
+    if (!container) return;
+    if (quote.length === 0) {
+      container.innerHTML = "<div style='text-align:center; color:gray;'>No hay productos agregados</div>";
+      if(totalModalSpan) totalModalSpan.innerText = "0";
+      if(countSpan) countSpan.innerText = "0";
+      if(totalFloatSpan) totalFloatSpan.innerText = "0";
+      updateAllQuantityButtons();
+      return;
+    }
+    let html = "";
+    let total = 0;
+    let totalItems = 0;
+    quote.forEach((item, idx) => {
+      // Si el precio es "Consultar" no se suma al total (se trata como 0)
+      const priceValue = (typeof item.price === 'number') ? item.price : 0;
+      const subtotal = priceValue * item.quantity;
+      total += subtotal;
+      totalItems += item.quantity;
+      const displayPrice = (typeof item.price === 'number') ? `S/${item.price}` : item.price;
+      html += `<div class="quote-item">
+        <div><strong>${escapeHtml(item.name)}</strong> x${item.quantity}</div>
+        <div>${displayPrice} <button onclick="removeFromQuote(${idx})">✖</button></div>
+      </div>`;
+    });
+    container.innerHTML = html;
+    if(totalModalSpan) totalModalSpan.innerText = total;
+    if(countSpan) countSpan.innerText = totalItems;
+    if(totalFloatSpan) totalFloatSpan.innerText = total;
+    updateAllQuantityButtons();
+  }
+
+  function addToQuote(name, price) {
+    // Si el precio es "Consultar", se agrega como string, no se puede sumar
+    const existing = quote.find(i => i.name === name);
+    if (existing) existing.quantity++;
+    else quote.push({ name, price, quantity: 1 });
+    updateQuoteUI();
+  }
+
+  function removeFromQuote(index) {
+    quote.splice(index, 1);
+    updateQuoteUI();
+  }
+  window.removeFromQuote = removeFromQuote;
+
+  function clearQuote() { quote = []; updateQuoteUI(); }
+  function sendQuoteWhatsApp() {
+    if (quote.length === 0) { alert("Agrega productos a la cotización."); return; }
+    let message = "🦷 *COTIZACIÓN MULTIDENT*%0A";
+    let total = 0;
+    quote.forEach(item => {
+      const priceValue = (typeof item.price === 'number') ? item.price : 0;
+      const subtotal = priceValue * item.quantity;
+      total += subtotal;
+      const displayPrice = (typeof item.price === 'number') ? `S/${item.price}` : item.price;
+      message += `- ${item.name} x${item.quantity} = ${displayPrice}%0A`;
+    });
+    message += `%0A*TOTAL: S/${total}*%0A%0A¡Gracias!`;
+    window.open(`https://wa.me/51991148547?text=${message}`, '_blank');
+  }
+
+  // Modal
+  const modal = document.getElementById("quoteModal");
+  const openBtn = document.getElementById("openQuoteBtn");
+  const closeBtn = document.getElementById("closeModalBtn");
+  openBtn.onclick = () => modal.style.display = "flex";
+  closeBtn.onclick = () => modal.style.display = "none";
+  window.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
+  document.getElementById("sendQuoteBtn").onclick = sendQuoteWhatsApp;
+  document.getElementById("clearQuoteBtn").onclick = clearQuote;
+
+  // Renderizado
+  let currentFilter = "all", currentSearch = "";
+  function highlightText(text, term) {
+    if (!term.trim()) return text;
+    const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    return text.replace(regex, `<span class="highlight">$1</span>`);
+  }
+
+  function renderCatalog() {
+    const container = document.getElementById("dynamicList");
+    if (!container) return;
+    let filtered = productos;
+    if (currentFilter !== "all") filtered = filtered.filter(p => p.group === currentFilter);
+    if (currentSearch.trim()) {
+      const lower = currentSearch.toLowerCase();
+      filtered = filtered.filter(p => p.name.toLowerCase().includes(lower) || p.category.toLowerCase().includes(lower));
+    }
+    container.innerHTML = "";
+    for (let mg of mainGroupOrder) {
+      let groupItems = filtered.filter(p => p.group === mg);
+      if (!groupItems.length) continue;
+      if (mg === "Prótesis fijas") {
+        container.innerHTML += `<div class="section-title">🦷 ${mg}</div>`;
+        for (let sub of subOrderFijas) {
+          let subItems = groupItems.filter(i => i.sub === sub);
+          if (!subItems.length) continue;
+          container.innerHTML += `<div class="subcat-title">▸ ${sub}</div>`;
+          subItems.forEach(item => {
+            let nameHtml = currentSearch ? highlightText(item.name, currentSearch) : item.name;
+            let catHtml = currentSearch ? highlightText(item.category, currentSearch) : item.category;
+            const found = quote.find(q => q.name === item.name);
+            const qty = found ? found.quantity : 0;
+            const btnText = qty > 0 ? `+ Cotizar (${qty})` : `+ Cotizar`;
+            const priceDisplay = (typeof item.price === 'number') ? `<div class="price">S/${item.price}</div>` : `<div class="price-consult">${item.price}</div>`;
+            container.innerHTML += `
+              <div class="card">
+                <div class="item-info">
+                  <div class="item-name">${nameHtml}</div>
+                  <div class="item-category">${catHtml}</div>
+                </div>
+                <div class="price-box">
+                  ${priceDisplay}
+                  <button class="btn-img" onclick="verImagenes('${escapeHtml(item.name)}')">Ver</button>
+                  <button class="btn-add" data-name="${escapeHtml(item.name)}" onclick="addToQuote('${escapeHtml(item.name)}', ${typeof item.price === 'number' ? item.price : '"Consultar"'})">${btnText}</button>
+                </div>
+              </div>`;
+          });
+        }
+      } else {
+        let icon = "📌";
+        if (mg === "Prótesis parcial removible") icon = "🔄";
+        else if (mg === "Prótesis flexibles") icon = "✨";
+        else if (mg === "Ortodoncia") icon = "😁";
+        else if (mg === "Prótesis totales") icon = "🦷";
+        else if (mg === "Adicionales") icon = "➕";
+        else if (mg === "Otros") icon = "⚙️";
+        container.innerHTML += `<div class="section-title">${icon} ${mg}</div>`;
+        groupItems.forEach(item => {
+          let nameHtml = currentSearch ? highlightText(item.name, currentSearch) : item.name;
+          let catHtml = currentSearch ? highlightText(item.category, currentSearch) : item.category;
+          const found = quote.find(q => q.name === item.name);
+          const qty = found ? found.quantity : 0;
+          const btnText = qty > 0 ? `+ Cotizar (${qty})` : `+ Cotizar`;
+          const priceDisplay = (typeof item.price === 'number') ? `<div class="price">S/${item.price}</div>` : `<div class="price-consult">${item.price}</div>`;
+          container.innerHTML += `
+            <div class="card">
+              <div class="item-info">
+                <div class="item-name">${nameHtml}</div>
+                <div class="item-category">${catHtml}</div>
+              </div>
+              <div class="price-box">
+                ${priceDisplay}
+                <button class="btn-img" onclick="verImagenes('${escapeHtml(item.name)}')">Ver</button>
+                <button class="btn-add" data-name="${escapeHtml(item.name)}" onclick="addToQuote('${escapeHtml(item.name)}', ${typeof item.price === 'number' ? item.price : '"Consultar"'})">${btnText}</button>
+              </div>
+            </div>`;
+        });
+      }
+    }
+    if (!container.innerHTML) container.innerHTML = "<div style='padding:40px;background:white;border-radius:28px;'>🔍 No se encontraron productos.</div>";
+  }
+
+  function filterAndHighlight() { currentSearch = document.getElementById("searchInput").value; renderCatalog(); }
+  function setFilter(group) { currentFilter = group; document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.filter === group)); renderCatalog(); }
+  document.querySelectorAll(".filter-btn").forEach(btn => btn.addEventListener("click", () => setFilter(btn.dataset.filter)));
+  window.verImagenes = (name) => window.open(`https://www.google.com/search?tbm=isch&q=${encodeURIComponent(name+" dental")}`, '_blank');
+  function escapeHtml(str) { if(!str) return ""; return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+
+  const goTop = document.getElementById("goTopBtn");
+  window.addEventListener("scroll", () => goTop.style.opacity = window.scrollY > 300 ? "1" : "0.6");
+  goTop.onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
+  document.getElementById("printBtn").onclick = () => window.print();
+
+  renderCatalog();
+  setTimeout(() => { const splash = document.getElementById("splash"); if(splash) splash.style.display = "none"; }, 2500);
+</script>
+<footer>🧾 Precios referenciales · Sujeto a cotización según diseño. <br>📍 Multident International - Calidad y precisión</footer>
+</body>
+</html>
